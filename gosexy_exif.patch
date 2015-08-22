@@ -1,0 +1,14 @@
+diff --git a/main.go b/main_patched.go
+index eddbc09..289d3d8 100644
+--- a/main.go
++++ b/main_patched.go
+@@ -27,7 +27,8 @@
+ package exif
+ 
+ /*
+-#cgo LDFLAGS: -lexif
++#cgo CFLAGS: -I/opt/boxen/homebrew/Cellar/libexif/0.6.21/include
++#cgo LDFLAGS: -L/opt/boxen/homebrew/Cellar/libexif/0.6.21/lib -lexif
+ 
+ #include <stdlib.h>
+ #include <libexif/exif-data.h>
