@@ -15,8 +15,11 @@ import (
 )
 
 var mode string;
+var destPath string;
 var supportedPhotoTypes = map[string]bool{
   ".jpg": true,
+  ".gif": true,
+  ".png": true,
 }
 
 func isSupportPhotoType(extension string) bool {
@@ -54,7 +57,7 @@ func procesImage(path string, f os.FileInfo, err error) error {
     if err != nil { log.Fatal(err) }
   }
 
-  newDir := fmt.Sprintf("%4d/%02d/%02d", t.Year(), t.Month(), t.Day())
+  newDir := fmt.Sprintf("%s/%4d/%02d/%02d", destPath, t.Year(), t.Month(), t.Day())
 
   err = os.MkdirAll(newDir, 0777)
   if err != nil { log.Fatal(err) }
@@ -120,8 +123,12 @@ func main() {
   }
 
   app.Action = func(c *cli.Context) {
-    path := c.Args().First()
-    if len(path) == 0 { log.Fatal("Please specify a path to process!") }
+    if len(c.Args()) < 2 {
+      log.Fatal("Please specify a source and destination path to process!")
+    }
+
+    srcPath := c.Args()[0]
+    destPath = c.Args()[1]
 
     if c.String("mode") == "move" || c.String("mode") == "copy" {
       mode = c.String("mode")
@@ -129,7 +136,7 @@ func main() {
       log.Fatal("Support --mode's are move or copy")
     }
 
-    err := filepath.Walk(path, procesImage)
+    err := filepath.Walk(srcPath, procesImage)
     if err != nil { log.Fatal(err) }
   }
 
