@@ -1,6 +1,9 @@
 .PHONY: all clean
 
 deps:
+	go get ./...
+
+update:
 	go get -u ./...
 
 all: deps
