@@ -1,6 +1,9 @@
 .PHONY: all clean
 
-all:
+deps:
+	go get -u ./...
+
+all: deps
 	go build -o photoman
 
 clean:

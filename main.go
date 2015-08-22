@@ -1,12 +1,13 @@
 package main
 
 import (
-  "io"
-  "os"
-  log "github.com/Sirupsen/logrus"
   "fmt"
-  "time"
+  "io"
+  log "github.com/Sirupsen/logrus"
+  "os"
   "path/filepath"
+  "strings"
+  "time"
 
   "github.com/gosexy/exif"
   "github.com/codegangsta/cli"
@@ -14,13 +15,31 @@ import (
 )
 
 var mode string;
+var supportedPhotoTypes = map[string]bool{
+  ".jpg": true,
+}
+
+func isSupportPhotoType(extension string) bool {
+  if _, ok := supportedPhotoTypes[extension]; ok {
+    return true
+  } else {
+    return false
+  }
+}
 
 func procesImage(path string, f os.FileInfo, err error) error {
   if f.IsDir() { return nil }
 
+  log.Debugf("Processing %s", path)
+
+  extension := filepath.Ext(f.Name())
+  if !isSupportPhotoType(strings.ToLower(extension)) {
+    log.Warnf("%s's file type %s is unsupported", path, extension)
+    return nil
+  }
+
   reader := exif.New()
 
-  log.Debugf("Processing %s", path)
   err = reader.Open(path)
   if err != nil { log.Fatal(err) }
 
